@@ -208,7 +208,6 @@ import {
   requestConsentOrFail,
 } from '../commands/extensions/consent.js';
 import { compactToggleHasVisualEffect } from './utils/mergeCompactToolGroups.js';
-import { getThinkingDisplayMode } from './utils/thinkingDisplayMode.js';
 import {
   findLastUserItemIndex,
   isSyntheticHistoryItem,
@@ -2104,7 +2103,6 @@ export const AppContainer = (props: AppContainerProps) => {
   // Generate prompt suggestions when streaming completes
   const followupSuggestionsEnabled =
     settings.merged.ui?.enableFollowupSuggestions === true;
-  const thinkingDisplayMode = getThinkingDisplayMode(settings);
 
   useEffect(() => {
     // Clear suggestion when feature is disabled at runtime
@@ -3303,7 +3301,6 @@ export const AppContainer = (props: AppContainerProps) => {
       initError,
       pendingGeminiHistoryItems,
       thought,
-      thinkingDisplayMode,
       shellModeActive,
       userMessages,
       buffer,
@@ -3432,7 +3429,6 @@ export const AppContainer = (props: AppContainerProps) => {
       initError,
       pendingGeminiHistoryItems,
       thought,
-      thinkingDisplayMode,
       shellModeActive,
       userMessages,
       buffer,
