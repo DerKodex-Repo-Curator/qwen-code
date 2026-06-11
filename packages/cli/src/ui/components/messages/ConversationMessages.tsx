@@ -6,6 +6,7 @@
 
 import type React from 'react';
 import { Box, Text } from 'ink';
+import Spinner from 'ink-spinner';
 import stringWidth from 'string-width';
 import {
   MarkdownDisplay,
@@ -355,7 +356,7 @@ export const ThinkMessage: React.FC<ThinkMessageProps> = ({
     return (
       <Box flexDirection="column">
         <Text dimColor italic>
-          ⠏ {t('Thinking')}…{durationSuffix}
+          <Spinner type="dots" /> {t('Thinking')}…{durationSuffix}
         </Text>
         <Box paddingLeft={2}>
           <Text dimColor wrap="truncate">
