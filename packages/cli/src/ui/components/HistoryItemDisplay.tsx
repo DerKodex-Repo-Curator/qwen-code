@@ -105,10 +105,7 @@ const HistoryItemDisplayComponent: React.FC<HistoryItemDisplayProps> = ({
   const { compactMode } = useCompactMode();
 
   const isHiddenInCompact =
-    compactMode &&
-    (item.type === 'gemini_thought' ||
-      item.type === 'gemini_thought_content' ||
-      (item.type === 'tool_use_summary' && summaryAbsorbed));
+    compactMode && item.type === 'tool_use_summary' && summaryAbsorbed;
 
   const itemForDisplay = useMemo(() => escapeAnsiCtrlCodes(item), [item]);
   const contentWidth = terminalWidth - 4;
@@ -165,7 +162,7 @@ const HistoryItemDisplayComponent: React.FC<HistoryItemDisplayProps> = ({
         <ThinkMessage
           text={itemForDisplay.text}
           isPending={isPending}
-          expanded={compactMode}
+          expanded={false}
           availableTerminalHeight={
             availableTerminalHeightGemini ?? availableTerminalHeight
           }
@@ -177,7 +174,7 @@ const HistoryItemDisplayComponent: React.FC<HistoryItemDisplayProps> = ({
         <ThinkMessageContent
           text={itemForDisplay.text}
           isPending={isPending}
-          expanded={compactMode}
+          expanded={false}
           availableTerminalHeight={
             availableTerminalHeightGemini ?? availableTerminalHeight
           }

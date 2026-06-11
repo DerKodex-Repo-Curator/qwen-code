@@ -1494,6 +1494,7 @@ export const useGeminiStream = (
               ) {
                 flushBufferedStreamEvents();
                 commitPendingThought(userMessageTimestamp);
+                thoughtBuffer = '';
               }
               bufferedEvents.push({ kind: 'content', value: event.value });
               scheduleBufferedStreamFlush();
@@ -1505,6 +1506,7 @@ export const useGeminiStream = (
               setThought((prev) => (prev ? null : prev));
               flushBufferedStreamEvents();
               commitPendingThought(userMessageTimestamp);
+              thoughtBuffer = '';
               toolCallRequests.push(event.value);
               // Count tool call args JSON toward token estimation.
               try {
@@ -1586,11 +1588,10 @@ export const useGeminiStream = (
                 if (pendingHistoryItemRef.current) {
                   setPendingHistoryItem(null);
                 }
-                if (pendingThoughtItemRef.current) {
-                  setPendingThoughtItem(null);
-                }
-                geminiMessageBuffer = '';
+                commitPendingThought(userMessageTimestamp);
                 thoughtBuffer = '';
+                setThought(null);
+                geminiMessageBuffer = '';
               } else {
                 flushBufferedStreamEvents();
               }
@@ -1647,6 +1648,7 @@ export const useGeminiStream = (
         }
       } finally {
         flushBufferedStreamEvents();
+        commitPendingThought(userMessageTimestamp);
         discardBufferedStreamEvents();
         flushBufferedStreamEventsRef.current.delete(flushBufferedStreamEvents);
       }
@@ -1674,7 +1676,6 @@ export const useGeminiStream = (
       pendingHistoryItemRef,
       pendingThoughtItemRef,
       setPendingHistoryItem,
-      setPendingThoughtItem,
       handleUserPromptSubmitBlockedEvent,
       handleStopHookLoopEvent,
       handleActiveGoalEvent,
@@ -2465,7 +2466,8 @@ export const useGeminiStream = (
         }
 
         for (const toolCall of restorableToolCalls) {
-          const filePath = (toolCall.request.args['file_path'] ?? toolCall.request.args['notebook_path']) as string;
+          const filePath = (toolCall.request.args['file_path'] ??
+            toolCall.request.args['notebook_path']) as string;
           if (!filePath) {
             onDebugMessage(
               `Skipping restorable tool call due to missing file_path: ${toolCall.request.name}`,
@@ -2516,14 +2518,7 @@ export const useGeminiStream = (
       }
     };
     saveRestorableToolCalls();
-  }, [
-    toolCalls,
-    config,
-    onDebugMessage,
-    history,
-    geminiClient,
-    storage,
-  ]);
+  }, [toolCalls, config, onDebugMessage, history, geminiClient, storage]);
 
   // ─── Unified notification queue (cron + background agents) ──────
   const notificationQueueRef = useRef<

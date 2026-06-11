@@ -17,6 +17,7 @@ import {
   SCREEN_READER_USER_PREFIX,
 } from '../../textConstants.js';
 import { t } from '../../../i18n/index.js';
+import { getCachedStringWidth } from '../../utils/textUtils.js';
 
 interface UserMessageProps {
   text: string;
@@ -267,7 +268,7 @@ function wrapToVisualLines(text: string, width: number): string[] {
     let currentLine = '';
     let currentWidth = 0;
     for (const char of logicalLine) {
-      const charWidth = stringWidth(char);
+      const charWidth = getCachedStringWidth(char);
       if (currentWidth + charWidth > width && currentWidth > 0) {
         visualLines.push(currentLine);
         currentLine = '';
@@ -291,7 +292,15 @@ function tailVisualLines(
   width: number,
   maxLines: number,
 ): string {
-  const lines = wrapToVisualLines(text, width);
+  const charBudget = maxLines * width * 2;
+  let sliceStart = Math.max(0, text.length - charBudget);
+  if (sliceStart > 0) {
+    const nl = text.indexOf('\n', sliceStart);
+    if (nl !== -1 && nl < text.length - 1) {
+      sliceStart = nl + 1;
+    }
+  }
+  const lines = wrapToVisualLines(text.slice(sliceStart), width);
   return lines.slice(-maxLines).join('\n');
 }
 
