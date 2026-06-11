@@ -158,6 +158,7 @@ const HistoryItemDisplayComponent: React.FC<HistoryItemDisplayProps> = ({
           sourceCopyIndexOffsets={sourceCopyIndexOffsets}
         />
       )}
+      {/* TODO(follow-up): wire expanded={compactMode} once Ctrl+O is decoupled */}
       {itemForDisplay.type === 'gemini_thought' && (
         <ThinkMessage
           text={itemForDisplay.text}
